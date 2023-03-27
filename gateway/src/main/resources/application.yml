@@ -1,0 +1,25 @@
+server:
+  port: 7002
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:7001/eureka/
+spring:
+  application:
+    name: gateway
+  cloud:
+    gateway:
+      routes:
+        - id: transactions-server
+          uri: lb://transactions-server
+          predicates:
+            - Path=/api/transactions/**
+          filters:
+            - RewritePath=/api/transactions/(?<segment>.*),/$\{segment}
+        - id: auth-server
+          uri: lb://auth-server
+          predicates:
+            - Path=/api/auth/**
+          filters:
+            - RewritePath=/api/auth/(?<segment>.*),/$\{segment}
